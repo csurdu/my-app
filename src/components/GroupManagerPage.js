@@ -1,17 +1,23 @@
-import React, { useState } from "react";
-
-// Hardcoded user data for demonstration
-const hardcodedUsers = [
-  { id: 1, name: "John Doe", email: "john@example.com", role: "Hotel Manager" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Hotel Manager" },
-];
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./GroupManagerPage.css"; // Adaugă stiluri personalizate
 
 const GroupManagerPage = () => {
+  const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
 
+  useEffect(() => {
+    axios
+      .get("/api/group-managers")
+      .then((response) => setUsers(response.data))
+      .catch((error) => console.error("Error fetching group managers:", error));
+  }, []);
+
   const handleInvite = () => {
-    console.log("Invitations sent to:", selectedUsers);
-    alert("Invitations sent!");
+    axios
+      .post("/api/invitations", { users: selectedUsers })
+      .then(() => alert("Invitations sent!"))
+      .catch((error) => console.error("Error sending invitations:", error));
   };
 
   const toggleSelection = (id) => {
@@ -21,7 +27,7 @@ const GroupManagerPage = () => {
   };
 
   return (
-    <div>
+    <div className="group-manager-page">
       <h2>Group Manager</h2>
       <table>
         <thead>
@@ -32,7 +38,7 @@ const GroupManagerPage = () => {
           </tr>
         </thead>
         <tbody>
-          {hardcodedUsers.map((user) => (
+          {users.map((user) => (
             <tr key={user.id}>
               <td>{user.name}</td>
               <td>{user.email}</td>

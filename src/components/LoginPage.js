@@ -1,32 +1,23 @@
 import React, { useState } from "react";
+import axios from "axios";
+import "./LoginPage.css"; // Adaugă stiluri personalizate
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Hardcoded users array for authentication
-  const hardcodedUsers = [
-    { id: 1, email: "john@example.com", password: "1234", role: "Hotel Manager" },
-    { id: 2, email: "jane@example.com", password: "5678", role: "Group Manager" },
-  ];
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    // Replace this with an API call to authenticate the user
-    const user = hardcodedUsers.find(
-      (u) => u.email === email && u.password === password
-    );
-
-    if (user) {
-      onLogin(user);
-    } else {
+    try {
+      const response = await axios.post("/api/auth/login", { email, password });
+      onLogin(response.data); // Setează utilizatorul autenticat
+    } catch (error) {
       alert("Invalid credentials");
     }
   };
 
   return (
-    <div>
+    <div className="login-page">
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <input
